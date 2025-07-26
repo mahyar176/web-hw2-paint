@@ -1,24 +1,21 @@
 import React, { useRef } from 'react';
 
 const Shape = ({ data, onDelete }) => {
-  // THE FIX: The main style object no longer needs the cursor property.
   const style = {
     position: 'absolute',
     left: `${data.x}px`,
     top: `${data.y}px`,
-    width: '50px',
-    height: '50px',
   };
 
   if (data.type === 'triangle') {
     return (
       <svg
         style={style}
-        className="shape triangle-svg"
+        className="shape triangle-svg-container"
         viewBox="0 0 100 100"
       >
         <polygon
-          // THE FIX: We will now control the cursor via CSS on this element.
+          className="triangle-svg-shape"
           points="50,5 95,95 5,95"
           fill="#32cd32"
           stroke="black"
@@ -31,7 +28,7 @@ const Shape = ({ data, onDelete }) => {
 
   return (
     <div
-      style={{ ...style, cursor: 'pointer' }} // Add cursor back for div-based shapes
+      style={{ ...style, width: '50px', height: '50px', cursor: 'pointer' }}
       className={`shape ${data.type}`}
       onDoubleClick={onDelete}
     ></div>
@@ -39,7 +36,6 @@ const Shape = ({ data, onDelete }) => {
 };
 
 
-// The rest of the file remains the same
 function Canvas({ shapes, selectedShape, onAddShape, onDeleteShape }) {
   const clickTimeout = useRef(null);
 
@@ -63,8 +59,29 @@ function Canvas({ shapes, selectedShape, onAddShape, onDeleteShape }) {
     onDeleteShape(id);
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const shapeType = e.dataTransfer.getData('shapeType');
+
+    if (shapeType) {
+      const canvasRect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - canvasRect.left - 25;
+      const y = e.clientY - canvasRect.top - 25;
+      onAddShape({ type: shapeType, x, y });
+    }
+  };
+
   return (
-    <main className="canvas" onClick={handleCanvasClick}>
+    <main
+      className="canvas"
+      onClick={handleCanvasClick}
+      onDragOver={handleDragOver} 
+      onDrop={handleDrop}
+    >
       {shapes.map((shape) => (
         <Shape
           key={shape.id}

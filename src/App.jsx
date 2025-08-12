@@ -8,8 +8,9 @@ function App() {
   const [initialPainting, setInitialPainting] = useState(null);
 
   const handleLoginSuccess = (data) => {
+    console.log('inital data: ', data)
     setUserData({ username: data.username, password: data.password });
-    setInitialPainting(data.painting && data.painting.shapes ? data.painting : {});
+    setInitialPainting(data.painting && JSON.parse(data.painting).shapes ? JSON.parse(data.painting) : {});
   };
 
   const handleLogout = () => {

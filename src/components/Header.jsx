@@ -5,22 +5,26 @@ const API_URL = 'http://localhost:13000';
 function Header({ paintingTitle, shapes, userData, onLogout }) {
 
   const handleSave = async () => {
+    // This is the painting data object
     const paintingData = {
       title: paintingTitle,
       shapes: shapes,
     };
 
+    // THE FIX: Convert the paintingData object to a JSON string here.
+    const paintingJsonString = JSON.stringify(paintingData);
+
     const payload = {
       username: userData.username,
       password: userData.password,
-      painting: paintingData,
+      painting: paintingJsonString, // The 'painting' field is now a string
     };
 
     try {
       const response = await fetch(`${API_URL}/painting`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload), // The entire payload is still stringified
       });
 
       if (!response.ok) {

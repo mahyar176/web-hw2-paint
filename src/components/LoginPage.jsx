@@ -12,21 +12,27 @@ function LoginPage({ onLoginSuccess }) {
     setError('');
 
     try {
-      const response = await fetch(`${API_URL}/painting`, {
+      const url = new URL(`${API_URL}/painting`);
+      url.searchParams.append('username', username);
+      url.searchParams.append('password', password);
+
+      const response = await fetch(url, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
       });
 
       if (!response.ok) {
         throw new Error('Sign in failed. Please check your credentials.');
       }
 
-      const data = await response.json();
+      // THE FIX: Get the response as a text string first.
+      const responseText = await response.text();
+      // Then, parse that string into a JSON object.
+      const data = JSON.parse(responseText);
       onLoginSuccess(data);
 
     } catch (err) {
-      setError(err.message);
+      // This will catch both network errors and JSON parsing errors.
+      setError(err.message || 'An unexpected error occurred.');
     }
   };
 

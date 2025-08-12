@@ -6,6 +6,7 @@ import Footer from './Footer.jsx';
 
 function PaintingPage({ initialPainting, userData, onLogout }) {
   const [paintingTitle, setPaintingTitle] = useState(initialPainting.title || 'My Painting');
+  console.log('initial painting, ', initialPainting);
   const [shapes, setShapes] = useState(initialPainting.shapes || []);
   const [selectedShape, setSelectedShape] = useState(null);
 
